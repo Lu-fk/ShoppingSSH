@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<constant name="struts.objectFactory" value="spring"></constant>
+	
+	<package name="default" extends="struts-default" namespace="/">
+		<!-- 登录拦截器 -->
+		<interceptors>
+			<interceptor name="log_intercept" class="org.interceptor.log_intercept"/>
+		</interceptors>
+		<global-results>
+			<result name="login">/login.jsp</result>
+		</global-results>
+		<!-- 登陆 -->
+		<action name="login" class="loginAction">
+			<result name="success">/index.jsp</result>
+			<result name="error">/login.jsp</result>
+		</action>
+		<!-- 注册 -->
+		<action name="register" class="loginAction" method="register">
+			<result name="success">/login.jsp</result>
+			<result name="error">/register.jsp</result>
+		</action>
+		<!-- 进入查看商品界面 -->
+		<action name="spInfo" class="spAction">
+			<result name="success">/cksp.jsp</result>
+			<interceptor-ref name="log_intercept"/>
+		</action>
+		<!-- 按id查找/查看详细商品信息 -->
+		<action name="spdetail" class="spAction" method="detail">
+			<result name="success">cksp_detail.jsp</result>
+			<result name="error">cksp.jsp</result>
+		</action>
+		<!-- 添加到购物车 -->
+		<action name="addcart" class="spAction" method="addToCart">
+			<result name="success" type="chain">spInfo</result>
+		</action>
+		<!-- 显示购物车信息 -->
+		<action name="cartInfo" class="cartAction" >
+			<result name="success">cart.jsp</result>
+			<result name="error" type="chain">spInfo</result>
+			<result name="logerror">login.jsp</result>
+			<interceptor-ref name="log_intercept"/>
+		</action>
+		<!-- 添加数量 -->
+		<action name="add" class="cartAction" method="addnum">
+			<result name="success" type="chain">cartInfo</result>
+		</action>
+		<!-- 减少数量 -->
+		<action name="sub" class="cartAction" method="subnum">
+			<result name="success" type="chain">cartInfo</result>
+		</action>
+		<!-- 结账添加至订单 -->
+		<action name="buy" class="cartAction" method="buy">
+			<result name="success" type="chain">orderInfo</result>
+		</action>
+		<!-- 显示订单信息 -->
+		<action name="orderInfo" class="orderAction">
+			<result name="success">myorder.jsp</result>
+			<result name="error" type="chain">spInfo</result>
+			<interceptor-ref name="log_intercept"/>
+		</action>
+		<!-- 删除订单 -->
+		<action name="deleteOrder" class="orderAction" method="delete">
+			<result name="success" type="chain">orderInfo</result>
+		</action>
+		<!-- 订单详情 -->
+		<action name="oddetail" class="orderAction" method="Ddetail">
+			<result name="success">order_detail.jsp</result>
+		</action>
+	</package>
+</struts>    

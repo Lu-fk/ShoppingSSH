@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/shopping">
+		</property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123456"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>org/model/Cart.hbm.xml</value>
+				<value>org/model/Comodity.hbm.xml</value>
+				<value>org/model/Dd.hbm.xml</value>
+				<value>org/model/User.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="dlDao" class="org.dao.imp.dlDaoImp">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	
+	<bean id="dlservice" class="org.service.imp.dlServiceManage">
+		<property name="dl">
+			<ref bean="dlDao"/>
+		</property>
+	</bean>
+
+	<bean id="loginAction" class="org.action.loginAction">
+		<property name="dlservice">
+			<ref bean="dlservice"/>
+		</property>
+	</bean>
+	
+	<bean id="spDao" class="org.dao.imp.spDaoImp">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	
+	<bean id="spservice" class="org.service.imp.spServiceManage">
+		<property name="sp">
+			<ref bean="spDao"/>
+		</property>
+	</bean>
+	
+	<bean id="spAction" class="org.action.spAction">
+		<property name="spservice">
+			<ref bean="spservice"/>
+		</property>
+		<property name="cartservice">
+			<ref bean="cartservice"/>
+		</property>
+	</bean>
+	
+	<bean id="cartDao" class="org.dao.imp.cartDaoImp">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	
+	<bean id="cartservice" class="org.service.imp.cartServiceManage">
+		<property name="cd">
+			<ref bean="cartDao"/>
+		</property>
+	</bean>
+	
+	<bean id="cartAction" class="org.action.cartAction">
+		<property name="cartservice">
+			<ref bean="cartservice"/>
+		</property>
+	</bean>
+	
+	<bean id="orderDao" class="org.dao.imp.orderDaoImp">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	
+	<bean id="orderservice" class="org.service.imp.orderServiceManage">
+		<property name="od">
+			<ref bean="orderDao"/>
+		</property>
+	</bean>
+	
+	<bean id="orderAction" class="org.action.orderAction">
+		<property name="orderservice">
+			<ref bean="orderservice"/>
+		</property>
+		<property name="cartservice">
+			<ref bean="cartservice"/>
+		</property>
+	</bean>
+</beans>
